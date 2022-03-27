@@ -1,0 +1,1 @@
+export const SEARCH_HISTORY_MAX_CNT = 8;
