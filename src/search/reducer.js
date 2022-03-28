@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import PersistenceRegistry from '../redux/PersistenceRegistry.js';
 import ReducerRegistry from '../redux/ReduxRegistry.js';
-import { FOCUS_INPUT, BLUR_INPUT, KEYWORD_CHANGE, ACTION_SEARCH, SET_SUMMONER_BASICINFO, SUMMONER_NOT_FOUND, REMOVE_LIST, ADD_FAVORITE, SET_SUMMONER_MATCHLIST, SET_SUMMONER_MOSTINFO } from './actionTypes.js';
+import { FOCUS_INPUT, BLUR_INPUT, KEYWORD_CHANGE, ACTION_SEARCH, SET_SUMMONER_BASICINFO, SUMMONER_NOT_FOUND, REMOVE_LIST, ADD_FAVORITE } from './actionTypes.js';
 import { SEARCH_HISTORY_MAX_CNT } from '../constants';
 
 function _getInitialState() {
@@ -36,57 +36,37 @@ ReducerRegistry.register(
         switch (action.type) {
         case FOCUS_INPUT:
             state.isFocus = true;
-            return {
-                ...state,
-            };
+            break;
         case BLUR_INPUT:
             state.isFocus = false;
-            return {
-                ...state,
-            };
+            break;
         case KEYWORD_CHANGE:
             state.keyword = action.keyword;
-            return {
-                ...state,
-            };
+            break;
         case ACTION_SEARCH:
             state.srchHistory = addSearchList(state.srchHistory, action.keyword);
-            return {
-                ...state,
-            }
+            break;
         case SET_SUMMONER_BASICINFO:
             state.summonerBasicInfo = action.summoner;
-            return {
-                ...state,
-            }
+            break;
         case SUMMONER_NOT_FOUND:
             state.summonerBasicInfo = {};
-            return {
-                ...state,
-            }
+            break;
         case REMOVE_LIST:
             if (action.tabType === 'RECENT') {
                 state.srchHistory = [ ...state.srchHistory.slice(0,action.idx), ...state.srchHistory.slice(action.idx+1) ];
             } else {
                 state.favoriteList = [ ...state.favoriteList.slice(0,action.idx), ...state.favoriteList.slice(action.idx+1) ];
             }
-            return {
-                ...state
-            };
+            break;
         case ADD_FAVORITE:
             state.favoriteList = addSearchList(state.favoriteList, action.keyword);
-            return {
-                ...state
-            }
-        case SET_SUMMONER_MOSTINFO:
-            state.champList = action.mostinfo.champions;
-            state.recentList = action.mostinfo.recentWinRate;
-            return {
-                ...state
-            }
+            break;
         }
         
-        return state;
+        return {
+            ...state
+        }
     }
 );
 

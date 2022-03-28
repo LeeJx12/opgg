@@ -20,28 +20,10 @@ class WinRateList extends Component {
 
     render() {
         let champRender = this.props._champList && this.props._champList?.map((element, idx) => {
-            const {
-                assists, cs, deaths, games, id, imageUrl, key, kills, losses, name, rank, wins
-            } = element;
-            const kda = (( kills + assists ) / deaths).toFixed(2);
-
-            let kdaCN = "kda-default";
-            if (kda >= 3 && kda < 4) {
-                kdaCN += " kda-o3";
-            } else if (kda >= 4 && kda < 5) {
-                kdaCN += " kda-o4";
-            } else if (kda > 5) {
-                kdaCN += " kda-o5";
-            }
-
-            const winRate = Math.round((wins / games) * 100);
-            let winRateCN = "win-rate-default";
-            if (winRate >= 60) {
-                winRateCN += " win-rate-o60";
-            }
+            const { assists, cs, deaths, games, id, imageUrl, key, kills, losses, name, rank, wins, kda, kdaCN, winRate, winRateCN } = element;
 
             return (
-                <div className="champion-box" key={idx}>
+                <div className="champion-box" key={id}>
                     <div className="face">
                         <a href={`https://www.op.gg/champions/${key}`} target="_blank" rel="noreferrer">
                             <img src={imageUrl} alt={name}/>
@@ -70,9 +52,7 @@ class WinRateList extends Component {
         });
 
         let recentRender = this.props._recentList && this.props._recentList?.map((element, idx) => {
-            const { imageUrl, key, losses, wins, name } = element;
-            const winRate = Math.round((wins / (wins + losses)) * 100);
-
+            const { imageUrl, key, losses, wins, name, winRate } = element;
             return (
                 <li key={idx}>
                     <div className="face">
@@ -132,50 +112,13 @@ class WinRateList extends Component {
 }
 
 export function _mapStateToProps(state) {
-    let champList = state['opgg/search'].champList;
-    let recentList = state['opgg/search'].recentList;
-
-    champList = mergeDuplicateList(champList);
-    recentList = mergeDuplicateList(recentList)
-
-    champList && champList.sort((a,b) => b.games - a.games);
-    recentList && recentList.sort((a,b) => (b.wins + b.losses) - (a.wins + a.losses));
+    let champList = state['opgg/winrate']?.champList;
+    let recentList = state['opgg/winrate']?.recentList;
 
     return {
         _champList: champList,
         _recentList: recentList,
     }
-}
-
-function mergeDuplicateList(list) {
-    if (!list || list.length === 0) return list;
-
-    const items = {};
-    const columns = Object.keys(list[0]);
-
-    list.forEach(element => {
-        if (!items[element.id]) {
-            items[element.id] = element;
-        } else {
-            const orgItem = items[element.id];
-
-            for (let i=0; i<columns.length; i++) {
-                const key = columns[i];
-                if ("id" !== key && "rank" !== key) {
-                    if (typeof orgItem[key] === 'Number') {
-                        orgItem[key] += element[key];
-                    }
-                }
-            }
-        }
-    });
-
-    const newList = [];
-    Object.keys(items).forEach(key => {
-        newList.push(items[key]);
-    });
-
-    return newList;
 }
 
 export default connect(_mapStateToProps)(WinRateList);

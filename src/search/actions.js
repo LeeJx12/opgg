@@ -44,20 +44,6 @@ export function setSummonerBasicInfo(summoner) {
     }
 }
 
-export function setSummonerMostInfo(summoner) {
-    return {
-        type: SET_SUMMONER_MOSTINFO,
-        mostinfo: summoner
-    }
-}
-
-export function setSummonerMatchList(summoner) {
-    return {
-        type: SET_SUMMONER_MATCHLIST,
-        matchlist: summoner
-    }
-}
-
 export function summonerNotFound() {
     return {
         type: SUMMONER_NOT_FOUND,

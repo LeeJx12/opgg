@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { isEmpty } from '../../common/functions';
 
 class SummonerInfo extends Component {
     constructor(props) {
@@ -7,15 +8,15 @@ class SummonerInfo extends Component {
     }
 
     render() {
-        if (!this.props._basicInfo) {
+        if (isEmpty(this.props._basicInfo)) {
             return (
                 <div className="summoner-info"></div>
             );
         }
         const { _basicInfo } = this.props;
         const { previousTiers, ladderRank, name, profileBorderImageUrl, profileImageUrl, level } = _basicInfo;
-        let rank = ladderRank.rank.toLocaleString();
-        let percent = ladderRank.rankPercentOfTop;
+        let rank = ladderRank?.rank.toLocaleString();
+        let percent = ladderRank?.rankPercentOfTop;
 
         return (
             <div className="summoner-info">

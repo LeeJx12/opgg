@@ -1,6 +1,8 @@
-import '../redux/middleware';
 import MiddlewareRegistry from '../redux/MiddlewareRegistry';
+import '../redux/middleware';
 import '../search/middleware';
+import '../winrate/middleware';
+import '../match/middleware';
 import { setItemList } from './actions';
 import { GET_ITEM_LIST } from './actionTypes';
 

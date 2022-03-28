@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { isEmpty } from '../../common/functions';
 import AbstractRank, { _mapStateToProps } from './AbstractRank';
 
 class FreeRank extends AbstractRank {
@@ -24,7 +25,7 @@ class FreeRank extends AbstractRank {
             </div>
         );
 
-        if (!this.props._basicInfo) {
+        if (isEmpty(this.props._basicInfo)) {
             return unrankedElement;
         }
 

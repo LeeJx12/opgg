@@ -1,3 +1,6 @@
+import '../search/reducer';
+import '../match/reducer';
+import '../winrate/reducer';
 import ReducerRegistry from '../redux/ReduxRegistry.js';
 import { SET_ITEM_LIST } from './actionTypes.js';
 

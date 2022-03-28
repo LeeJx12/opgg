@@ -7,39 +7,27 @@ class MatchRecord extends Component {
     }
 
     render() {
-        const { kills, deaths, assists, wins=0, losses=0 } = this.props._summary;
+        const { kills, deaths, assists, wins, losses } = this.props._summary;
         const champs = this.props._champs;
         const champRender = champs.map((element, idx) => {
-            const winRate = Math.round((element.wins / (element.wins + element.losses)) * 100);
-            let winRateCN = "win-rate-summary";
-            if (winRate >= 60) winRateCN += " win-rate-o60";
-
-            const kda = (( element.kills + element.assists ) / element.deaths).toFixed(2);
-            let kdaCN = "avg-point-default";
-            if (kda > 6) {
-                kdaCN += " avg-point-o6";
-            }
-
             return (
                 <li key={idx}>
                     <div className="icon">
                         <img src={element.imageUrl} alt={element.name}/>
                     </div>
-                    <div className="name">{element}</div>
+                    <div className="name">{element.name}</div>
                     <div className="win-lose">
                         <div className="" style={{position: "relative", display: "inline"}}>
-                            <b className={winRateCN}>{winRate}%</b>
+                            <b className={element.winRateCN}>{element.winRate}%</b>
                         </div> ({element.wins}승 {element.losses}패)
                     </div>
-                    <div className={kdaCN}>{kda} 평점</div>
+                    <div className={element.kdaCN}>{element.kda} 평점</div>
                 </li>
             );
         });
 
         const positions = this.props._positions;
         const positionRender = positions.map((element, idx) => {
-            const roleRatio = Math.round(element.games / (wins + losses) * 100);
-            const posWinRate = Math.round(element.wins / element.games * 100);
             return (
                 <li key={idx}>
                     <div className="icon">
@@ -48,8 +36,8 @@ class MatchRecord extends Component {
                     <div className="content">
                         <div className="name">{element.positionName}</div>
                         <div>
-                            <span className="role-ratio"><b>{roleRatio}</b>%</span>
-                            <span className="win-ratio">승률 <b>{posWinRate}</b>%</span>
+                            <span className="role-ratio"><b>{element.roleRatio}</b>%</span>
+                            <span className="win-ratio">승률 <b>{element.posWinRate}</b>%</span>
                         </div>
                     </div>
                 </li>
@@ -134,9 +122,9 @@ class MatchRecord extends Component {
 }
 
 export function _matStateToProps(state) {
-    const champs = state['opgg/search'].matchList.champions;
-    const positions = state['opgg/search'].matchList.positions;
-    const summary = state['opgg/search'].matchList.positions;
+    const champs = state['opgg/match'].champs;
+    const positions = state['opgg/match'].positions;
+    const summary = state['opgg/match'].summary;
 
     return {
         _champs: champs,
