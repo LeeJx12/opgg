@@ -20,6 +20,9 @@ a {
 b {
     font-weight: bold;
 }
+svg {
+    overflow: inherit;
+}
 
 .dp_n {
     display: none !important;
@@ -673,7 +676,7 @@ div.search-area div.search {
 .win-rate-default {
     font-weight: bold;
     font-size: 13px;
-    color: #879292;
+    color: rgb(51, 51, 51);
 }
 .win-rate-o60 {
     color: #c6443e;
@@ -784,6 +787,7 @@ div.search-area div.search {
     width: 100%;
     table-layout: auto;
     background-color: rgb(237, 237, 237);
+    min-height: 155px;
 }
 .record-summary-div table td.title {
     padding: 16px 0px 14px 20px;
@@ -1334,21 +1338,21 @@ div.search-area div.search {
     font-size: 11px;
     background: rgb(28, 30, 30);
 }
-.toolTip {
+.tooltip {
     color: rgb(242, 242, 242);
     font-size: 11px;
     line-height: 16px;
     white-space: pre-wrap;
     max-width: 300px;
 }
-.toolTip .item_name {
+.tooltip .item_name {
     color: rgb(0, 207, 188);
 }
-.toolTip > .item_name {
+.tooltip.ward > .item_name {
     color: rgb(255, 198, 89);
     font-weight: bold;
 }
-.toolTip > .item_cost {
+.tooltip > .item_cost {
     color: rgb(255, 198, 89);
     margin-left: 4px;
 }

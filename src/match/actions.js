@@ -1,6 +1,6 @@
-import { SET_SUMMONER_MATCHLIST } from './actionTypes';
+import { SET_SUMMONER_MATCHLIST, SET_TAB_TYPE } from './actionTypes';
 
-export function setSummonerMatchList(data, itemList) {
+export function setSummonerMatchList(data, itemList, spells) {
     return {
         type: SET_SUMMONER_MATCHLIST,
         champs: data.champions,
@@ -8,5 +8,13 @@ export function setSummonerMatchList(data, itemList) {
         summary: data.summary,
         games: data.games,
         itemList: itemList,
+        spells: spells,
+    }
+}
+
+export function setTabType(tabType) {
+    return {
+        type: SET_TAB_TYPE,
+        tabType: tabType
     }
 }

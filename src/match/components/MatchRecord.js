@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { Cell, Pie, PieChart } from 'recharts';
+import { LINE_NAMES } from '../../common/constants';
+import { getAvgPointClassName, getFileNameFromUrl, getWinRateClassName } from '../../common/functions';
 
 class MatchRecord extends Component {
     constructor(props) {
@@ -7,7 +10,7 @@ class MatchRecord extends Component {
     }
 
     render() {
-        const { kills, deaths, assists, wins, losses, totalWinRate } = this.props._summary;
+        const { kills, deaths, assists, wins, losses, totalWinRate, killPart } = this.props._summary;
         const champs = this.props._champs;
         const champRender = champs.map((element, idx) => {
             return (
@@ -34,15 +37,17 @@ class MatchRecord extends Component {
                         <img src={`./resource/image/icon-mostposition-${element.position.toLowerCase()}.png`} alt={element.position}/>
                     </div>
                     <div className="content">
-                        <div className="name">{element.positionName}</div>
+                        <div className="name">{LINE_NAMES[element.position]}</div>
                         <div>
-                            <span className="role-ratio"><b>{element.roleRatio}</b>%</span>
+                            <span className="role-ratio"><b>{element.roleRatio}</b>% </span>
                             <span className="win-ratio">승률 <b>{element.posWinRate}</b>%</span>
                         </div>
                     </div>
                 </li>
             );
         });
+
+        const pieData = [{"name": "wins", "value": wins}, {"name": "losses", "value": losses}];
 
         return (
             <div className="record-summary-div">
@@ -60,42 +65,13 @@ class MatchRecord extends Component {
                         <tr>
                             <td className="summary">
                                 <div className="chart">
-                                    <div className="recharts-wrapper"
-                                        style={{position: "relative", cursor: "default", width: "90px", height: "90px"}}><svg
-                                            className="recharts-surface" width="90" height="90" viewBox="0 0 90 90"
-                                            version="1.1">
-                                            <defs>
-                                                <clipPath id="recharts3-clip">
-                                                    <rect x="5" y="5" height="80" width="80"></rect>
-                                                </clipPath>
-                                            </defs>
-                                            <g className="recharts-layer recharts-pie">
-                                                <g className="recharts-layer recharts-pie-sector">
-                                                    <path stroke="none" fill="#ee5a52" color="#ee5a52"
-                                                        className="recharts-sector" d="M 45,0
-                                                                A 45,45,0,
-                                                                0,1,
-                                                                78.10757598029093,75.47767072315834
-                                                            L 67.07171732019395,65.31844714877224
-                                                                        A 30,30,0,
-                                                                        0,0,
-                                                                        45,15 Z">
-                                                    </path>
-                                                </g>
-                                                <g className="recharts-layer recharts-pie-sector">
-                                                    <path stroke="none" fill="#1f8ecd" color="#1f8ecd"
-                                                        className="recharts-sector" d="M 78.10757598029093,75.47767072315834
-                                                            A 45,45,0,
-                                                            1,1,
-                                                            44.99999999999999,0
-                                                        L 44.99999999999999,15
-                                                                    A 30,30,0,
-                                                                    1,0,
-                                                                    67.07171732019395,65.31844714877224 Z">
-                                                    </path>
-                                                </g>
-                                            </g>
-                                        </svg></div>
+                                    <PieChart width={90} height={90}>
+                                        <Pie data={pieData} startAngle={-270}
+                                            color="#000000" dataKey="value" nameKey="name" cx="50%" cy="50%" innerRadius={30} outerRadius={50} fill="#1f8ecd" >
+                                            <Cell fill="#1f8ecd" />
+                                            <Cell fill="#ee5a52"/>
+                                        </Pie>
+                                    </PieChart>
                                     <div className="text">{totalWinRate}%</div>
                                 </div>
                             </td>
@@ -105,7 +81,7 @@ class MatchRecord extends Component {
                                 </div>
                                 <div className="ratio"><span className="kda-ratio">{(( kills + assists ) / deaths).toFixed(2)}:1</span>
                                     <div className="" style={{position: "relative"}}><span
-                                            className="kill-participantion">(49%)</span></div>
+                                            className="kill-participantion">({killPart}%)</span></div>
                                 </div>
                             </td>
                             <td className="position-stats">
@@ -122,15 +98,109 @@ class MatchRecord extends Component {
 }
 
 export function _matStateToProps(state) {
-    const champs = state['opgg/match'].champs;
+    const champList = state['opgg/app'].champList;
+    const tabType = state['opgg/match'].tabType;
+    let champs = state['opgg/match'].champs;
     const positions = state['opgg/match'].positions;
-    const summary = state['opgg/match'].summary;
+    let summary = state['opgg/match'].summary;
+    const games = state['opgg/match'].games;
+
+    let filtered = [];
+    if ("SOLO" === tabType) {
+        filtered = games.filter(game => "솔랭" === game.gameType);
+    } else if ("FREE" === tabType) {
+        filtered = games.filter(game => "자유 5:5 랭크" === game.gameType);
+    }
+
+    if ("ALL" != tabType) {
+        summary = filtered.reduce((acc, value, idx, arr) => {
+                const { stats } = value;
+                const { general } = stats;
+
+                acc.kills += general.kill;
+                acc.assists += general.assist;
+                acc.deaths += general.death;
+                acc.wins += value.isWin ? 1 : 0;
+                acc.losses += value.isWin ? 0 : 1;
+                acc.totalKills += Number(general.contributionForKillRate.replace("%", ""));
+
+                return acc;
+            }, {
+                kills: 0,
+                assists: 0,
+                deaths: 0,
+                wins: 0,
+                losses: 0,
+                totalKills: 0,
+            });
+        summary.totalWinRate = Math.round(summary.wins / (summary.wins + summary.losses) * 100);
+        summary.killPart = Math.round(summary.totalKills / filtered.length);
+
+        champs = mergeDuplicateList(filtered, champList).sort((a,b) => b.games - a.games).slice(0, 3);
+        champs.forEach(element => {
+            const { wins, losses, kills, deaths, assists, imageUrl, name, id } = element;
+    
+            const winRate = Math.round((wins / (wins + losses)) * 100);
+            const winRateClassName = getWinRateClassName(winRate);
+    
+            const kda = deaths === 0 ? 0 : (( kills + assists ) / deaths).toFixed(2);
+            const kdaClassName = getAvgPointClassName(kda);
+    
+            element.winRate = winRate;
+            element.winRateCN = winRateClassName;
+            element.kda = kda;
+            element.kdaCN = kdaClassName;
+        })
+    }
 
     return {
         _champs: champs,
         _positions: positions,
-        _summary: summary
+        _summary: summary,
+        _tabType: tabType
     }
+}
+
+function mergeDuplicateList(list, champList) {
+    if (!list || list.length === 0) return list;
+
+    const items = {};
+    const columns = Object.keys(list[0]);
+
+    list.forEach(element => {
+        if (!items[element.champion.imageUrl]) {
+            items[element.champion.imageUrl] = {
+                id : champList[getFileNameFromUrl(element.champion.imageUrl)].id,
+                imageUrl: element.champion.imageUrl,
+                games : 1,
+                wins : element.isWin ? 1 : 0,
+                losses: element.isWin ? 0 : 1,
+                kills: element.stats.general.kill,
+                deaths: element.stats.general.death,
+                assists: element.stats.general.assist,
+                name: champList[getFileNameFromUrl(element.champion.imageUrl)].name
+            };
+        } else {
+            const orgItem = items[element.champion.imageUrl];
+
+            orgItem.games++;
+            if (element.isWin) {
+                orgItem.wins++;
+            } else {
+                orgItem.losses++;
+            }
+            orgItem.kills += element.stats.general.kill;
+            orgItem.deaths += element.stats.general.death;
+            orgItem.assists += element.stats.general.assist;
+        }
+    });
+
+    const newList = [];
+    Object.keys(items).forEach(key => {
+        newList.push(items[key]);
+    });
+
+    return newList;
 }
 
 export default connect(_matStateToProps)(MatchRecord);

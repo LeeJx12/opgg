@@ -13,9 +13,7 @@ class MatchListItem extends Component {
 
         return spells.map((spEl, idx) => (
             <div className="spell" key={idx}>
-                <div className="" style={{position: "relative"}}>
-                    <img src={spEl.imageUrl} alt=""/>
-                </div>
+                { this.itemTooltipRender(spEl.detail, spEl.imageUrl, true, true) }
             </div>
         ));
     }
@@ -41,57 +39,81 @@ class MatchListItem extends Component {
         }
 
         return items.map((itEl, idx) => {
-            if (isEmpty(itEl.imageUrl)) {
+            if (isEmpty(itEl.imageUrl) || isEmpty(itEl.detail)) {
                 return (
                     <li key={idx}></li>
                 )
             } else {
                 const { detail } = itEl;
-                const { descList } = detail;
-
-                const descRender = descList.map((desc, idx) => {
-                    if (desc === '<br>') {
-                        return (
-                            <span><br/></span>
-                        )
-                    } else {
-                        if (idx === 0) {
-                            <span>{desc}</span>
-                        } else {
-                            <span><br/>{desc}</span>
-                        }
-                    }
-                });
 
                 return (
-                    <Tooltip
-                        content={(
-                            <div class="toolTip">
-                                <div class="item_name">{detail.name}</div>
-                                <div>{detail.plaintext}</div>
-                                <div>
-                                    { descRender }
-                                </div>
-                                <br/>가격:<span class="item_cost">{`${detail.gold.total} (${detail.gold.sell})`}</span>
-                            </div>
-                        )}
-                        direction="top"
-                        tagName="div"
-                        className="toolTip"
-                    >
-                        <li key={idx}>
-                            <div className="" style={{position: "relative"}}>
-                                <img src={itEl.imageUrl} alt=""/>
-                            </div>
-                        </li>
-                    </Tooltip>
+                    <li key={idx}>
+                        { this.itemTooltipRender(detail, itEl.imageUrl) }
+                    </li>
                 )
             }
         });
     }
 
+    itemTooltipRender(detail, imageUrl, isWard, isOneLine) {
+        const descList = detail?.descList ? detail.descList : [];
+        let descRender = descList.map((desc, idx) => {
+            let element;
+            if (desc === '<br>') {
+                element = (
+                    <span key={idx}><br/></span>
+                )
+            } else {
+                if (idx === 0) {
+                    element = (
+                        <span key={idx}>{desc}</span>
+                    );
+                } else {
+                    element = (
+                        <span key={idx}><br/>{desc}</span>
+                    );
+                }
+            }
+            return element;
+        });
+
+        if (isOneLine) {
+            descRender = (<span>{detail?.description}</span>);
+        }
+
+        return (
+            <Tooltip
+                content={(
+                    <div className={`tooltip ${isWard ? "ward" : ""}`}>
+                        <div className="item_name">{detail.name}</div>
+                        <div>{detail.plaintext}</div>
+                        <div>
+                            { descRender }
+                        </div>
+                        { !isWard &&
+                            <br/>
+                        }
+                        { !isWard &&
+                            <span>가격:</span>
+                        }
+                        { !isWard &&
+                            <span className="item_cost">{`${detail.gold.total} (${detail.gold.base})`}</span>
+                        }
+                    </div>
+                )}
+                direction="up"
+                tagName="div"
+                className="toolTip"
+            >
+                <div className="" style={{position: "relative"}}>
+                    <img src={imageUrl} alt=""/>
+                </div>
+            </Tooltip>
+        );
+    }
+
     teamRender() {
-        if (!this.props.game?.gameId || !this.props._teams[this.props.game.gameId]) {
+        if (!this.props.game?.gameId || !this.props.game.teams || this.props.game.teams.length === 0) {
             return (
                 <div className="participants">
                 <ul>
@@ -102,7 +124,7 @@ class MatchListItem extends Component {
             )
         }
 
-        const { teams } = this.props._teams[this.props.game.gameId];
+        const { teams } = this.props.game;
 
         const team1Render = teams[0]?.players.map(element => {
             const className = this.props.game.summonerName === element.summonerName ? "summoner me" : "summoner others";
@@ -145,7 +167,7 @@ class MatchListItem extends Component {
     }
 
     render() {
-        const { gameId, gameType, createDate, result, gameLength, champion, stats, wardImageUrl, wardCnt, ward, buildIcon, name, level } = this.props.game;
+        const { gameId, gameType, createDate, result, gameLength, champion, stats, wardImageUrl, wardCnt, ward, wardDetail, buildIcon, name, level } = this.props.game;
         return (
             <li className="record-list">
                 <div result={result} className={`record-div ${result.toLowerCase()}`}>
@@ -160,7 +182,7 @@ class MatchListItem extends Component {
                     </div>
                     <div className="champion">
                         <div className="icon">
-                            <a target="_blank" rel="noreferrer">
+                            <a href={`https://www.op.gg/champions/${name}`} target="_blank" rel="noreferrer">
                                 <img src={champion.imageUrl}/>
                             </a>
                         </div>
@@ -170,7 +192,7 @@ class MatchListItem extends Component {
                         <div className="runes">
                             { this.peakRender() }
                         </div>
-                        <div className="name">{name}</div>
+                        <div className="name">{this.props._champList[name]?.name}</div>
                     </div>
                     <div className="kda">
                         <div className="k-d-a"><span>{stats.general.kill}</span> / <span className="d">{stats.general.death}</span> / <span>{stats.general.assist}</span></div>
@@ -193,15 +215,20 @@ class MatchListItem extends Component {
                                 </ul>
                                 <div>
                                     <div className="ward">
-                                        <div className="" style={{position: "relative"}}>
-                                            <img src={ward.imageUrl} alt=""/>
-                                        </div>
+                                        { this.itemTooltipRender(wardDetail, ward.imageUrl, true) }
                                     </div>
                                     <div className="build">
                                         <div className="" style={{position: "relative"}}>
-                                            <button>
-                                                <img src={buildIcon} alt=""/>
-                                            </button>
+                                            <Tooltip
+                                                content="빌드"
+                                                direction="up"
+                                                tagName="div"
+                                                className="toolTip"
+                                            >
+                                                <button>
+                                                    <img src={buildIcon} alt=""/>
+                                                </button>
+                                            </Tooltip>
                                         </div>
                                     </div>
                                 </div>
@@ -225,11 +252,13 @@ class MatchListItem extends Component {
 
 export function _matStateToProps(state) {
     const games = state['opgg/match'].games;
-    const teams = state['opgg/match'].teams;
+    const itemList = state['opgg/app'].itemList;
+    const champList = state['opgg/app'].champList;
 
     return {
         _games: games,
-        _teams: teams
+        _itemList: itemList,
+        _champList: champList
     }
 }
 

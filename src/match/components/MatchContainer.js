@@ -1,14 +1,12 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { MatchList, MatchRecord } from '.';
+import { isEmpty } from '../../common/functions';
+import { setTabType } from '../actions';
 
 class MatchContainer extends Component {
     constructor(props) {
         super(props);
-
-        this.state = {
-            tabType: 'ALL'
-        }
     }
 
     componentDidMount() {
@@ -24,22 +22,22 @@ class MatchContainer extends Component {
             <div className="record-pane">
                 <div className="record-top">
                     <ul>
-                        <li className={this.state.tabType === 'ALL' ? "tab active" : "tab"} tabtype="ALL"><button value="TOTAL">전체</button></li>
-                        <li className={this.state.tabType === 'SOLO' ? "tab active" : "tab"} tabtype="SOLO"><button value="SOLORANKED">솔로랭크</button></li>
-                        <li className={this.state.tabType === 'FREE' ? "tab active" : "tab"} tabtype="FREE"><button value="FLEXRANKED">자유랭크</button></li>
+                        <li className={this.props._tabType === 'ALL' ? "tab active" : "tab"} tabtype="ALL"><button value="TOTAL">전체</button></li>
+                        <li className={this.props._tabType === 'SOLO' ? "tab active" : "tab"} tabtype="SOLO"><button value="SOLORANKED">솔로랭크</button></li>
+                        <li className={this.props._tabType === 'FREE' ? "tab active" : "tab"} tabtype="FREE"><button value="FLEXRANKED">자유랭크</button></li>
                     </ul>
                 </div>
                 {
-                    !this.props._matchData && 
+                    isEmpty(this.props._matchData) && 
                     <div className="no-data">기록된 전적이 없습니다.</div>
                 }
                 {
-                    this.props._matchData &&
-                    <MatchRecord/>
+                    !isEmpty(this.props._matchData) &&
+                    <MatchRecord tab={this.props._tabType}/>
                 }
                 {
-                    this.props._matchData &&
-                    <MatchList/>
+                    !isEmpty(this.props._matchData) &&
+                    <MatchList tab={this.props._tabType}/>
                 }
             </div>
         );
@@ -49,8 +47,8 @@ class MatchContainer extends Component {
         if (document.querySelector(".record-top").contains(e.target)) {
             const trgtTabType = e.target.closest("li").getAttribute("tabtype");
 
-            if (this.state.tabType !== trgtTabType) {
-                this.setState({tabType: trgtTabType});
+            if (this.props._tabType !== trgtTabType) {
+                this.props.dispatch(setTabType(trgtTabType));
             }
         }
     }
@@ -58,9 +56,11 @@ class MatchContainer extends Component {
 
 export function _mapStateToProps(state) {
     const matchData = state['opgg/match']?.summary;
+    const tabType = state['opgg/match']?.tabType || 'ALL';
 
     return {
         _matchData: matchData,
+        _tabType: tabType
     }
 }
 

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import Tooltip from 'react-tooltip-lite';
 
 class WinRateList extends Component {
     constructor(props) {
@@ -16,6 +17,19 @@ class WinRateList extends Component {
 
     componentWillUnmount() {
         document.querySelector(".win-rate-div").removeEventListener('click', this.eventHandler);
+    }
+
+    itemTooltipRender(content, element) {
+        return (
+            <Tooltip
+                content={content}
+                direction="up"
+                tagName="div"
+                className="toolTip"
+            >
+                {element()}
+            </Tooltip>
+        );
     }
 
     render() {
@@ -36,9 +50,13 @@ class WinRateList extends Component {
                         <div className="cs">CS {cs}</div>
                     </div>
                     <div className="kda">
-                        <div className="" style={{position: "relative"}}>
-                            <div className={kdaCN}>{kda} 평점</div>
-                        </div>
+                        { 
+                            this.itemTooltipRender(`(K ${kills} + A ${assists}) / D ${deaths}`, () => (
+                                <div className="" style={{position: "relative"}}>
+                                    <div className={kdaCN}>{kda} 평점</div>
+                                </div>  
+                            ))
+                        }
                         <div className="detail">{kills} / {deaths} / {assists}</div>
                     </div>
                     <div className="played">

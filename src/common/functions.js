@@ -39,12 +39,12 @@ export function isEmpty(obj) {
 }
 
 export function getMinuteSecond(time) {
-    return `${(time / 60)}분 ${(time % 60)}초`;
+    return `${Math.round(time / 60)}분 ${(time % 60)}초`;
 }
 
 export function getFormattedDate(time) {
     const today = new Date().getTime();
-    let gap = (today - time) / 1000;
+    let gap = (today / 1000) - time;
 
     const day = Math.round(gap/3600/24);
     const hour = Math.round(gap/3600);
@@ -69,7 +69,7 @@ export function getFileNameFromUrl(url) {
     if (isEmpty(url)) return '';
 
     const idx = url.lastIndexOf('/');
-    return idx !== -1 ? url.substring(idx, url.length).replace('.png', '') : '';
+    return idx !== -1 ? url.substring(idx + 1, url.length).replace('.png', '') : '';
 }
 
 export function splitMulti(str, tokens){
@@ -79,4 +79,29 @@ export function splitMulti(str, tokens){
     }
     str = str.split(tempChar);
     return str;
+}
+
+export function getTooltipDetail(list) {
+    Object.keys(list).forEach(key => {
+        const item = list[key];
+        const desc = item.description;
+
+        let tokens = desc.split('<br>');
+        tokens = tokens.map(token => token.replace(/(<([^>]+)>)/ig, ''));
+
+        const descList = [];
+        for (let i=0; i<tokens.length; i++) {
+            if (isEmpty(tokens[i])) continue;
+            if (i !== 0) {
+                descList.push('<br>');
+            }
+            if (!isEmpty(tokens[i])) {
+                descList.push(tokens[i]);
+            }
+        }
+
+        item.descList = descList;
+    });
+
+    return list;
 }

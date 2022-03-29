@@ -89,5 +89,13 @@ function mergeDuplicateList(list) {
         newList.push(items[key]);
     });
 
+    newList.forEach(item => {
+        item.kills = Number((item.kills / item.games).toFixed(1));
+        item.deaths = Number((item.deaths / item.games).toFixed(1));
+        item.assists = Number((item.assists / item.games).toFixed(1));
+
+        if (item.deaths === 0) item.deaths = 0.1;
+    })
+
     return newList;
 }

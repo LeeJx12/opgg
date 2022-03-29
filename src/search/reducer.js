@@ -2,10 +2,11 @@ import _ from 'lodash';
 import PersistenceRegistry from '../redux/PersistenceRegistry.js';
 import ReducerRegistry from '../redux/ReduxRegistry.js';
 import { FOCUS_INPUT, BLUR_INPUT, KEYWORD_CHANGE, ACTION_SEARCH, SET_SUMMONER_BASICINFO, SUMMONER_NOT_FOUND, REMOVE_LIST, ADD_FAVORITE } from './actionTypes.js';
-import { SEARCH_HISTORY_MAX_CNT } from '../constants';
+import { SEARCH_HISTORY_MAX_CNT } from '../common/constants';
 
 function _getInitialState() {
     const persistedState = PersistenceRegistry.getPersistedState();
+
     let keyword = '';
     let isFocus = false;
     let srchHistory = persistedState ? persistedState['opgg/search']?.srchHistory || [] : [];

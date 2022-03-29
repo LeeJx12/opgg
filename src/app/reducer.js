@@ -2,14 +2,23 @@ import '../search/reducer';
 import '../match/reducer';
 import '../winrate/reducer';
 import ReducerRegistry from '../redux/ReduxRegistry.js';
-import { SET_ITEM_LIST } from './actionTypes.js';
-import { isEmpty, splitMulti } from '../common/functions';
+import { SET_CHAMP_LIST, SET_ITEM_LIST, SET_SPELLS, SET_VERSION } from './actionTypes.js';
+import { getTooltipDetail, isEmpty } from '../common/functions';
+import PersistenceRegistry from '../redux/PersistenceRegistry';
 
 function _getInitialState() {
+    const persistedState = PersistenceRegistry.getPersistedState();
+
     let itemList = {};
+    let champList = {};
+    let spells = {};
+    let version = persistedState ? persistedState['opgg/app']?.version || '0.0.0' : '0.0.0';
 
     return {
-        itemList
+        itemList,
+        champList,
+        spells,
+        version
     };
 }
 
@@ -19,37 +28,56 @@ ReducerRegistry.register(
         switch (action.type) {
         case SET_ITEM_LIST:
             setItemList(state, action);
-            return {
-                ...state
-            }
+            break;
+        case SET_CHAMP_LIST:
+            setChampList(state, action);
+            break;
+        case SET_SPELLS:
+            setSpells(state, action);
+            break;
+        case SET_VERSION:
+            versionCheck(state, action);
+            break;
         }
 
-        return state;
+        return {
+            ...state
+        }
     }
 );
 
+PersistenceRegistry.register('opgg/app', {
+    itemList: true,
+    champList: true,
+    spells: true,
+    version: true
+})
+
 function setItemList(state, action) {
-    const itemList = action;
+    state.itemList = getTooltipDetail(action.itemList);
+}
 
-    Object.keys(itemList).forEach(key => {
-        const item = itemList[key];
-        const desc = item.description;
+function setChampList(state, action) {
+    state.champList = action.champList;
+}
 
-        const tokens = desc.split('<br>');
-        tokens = tokens.map(token => token.replace(/(<([^>]+)>)/ig, ''));
+function setSpells(state, action) {
+    state.spells = getTooltipDetail(action.spells);
+}
 
-        const descList = [];
-        for (let i=0; i<tokens.length; i++) {
-            if (i !== 0) {
-                descList.push('<br>');
-            }
-            if (!isEmpty(tokens[i])) {
-                descList.push(tokens[i]);
-            }
+function versionCheck(state, action) {
+    const nowVer = state.version.split('.');
+    const svrVer = action.version.split('.');
+
+    let needUpdate = false;
+    for (let i=0; i<3; i++) {
+        if (Number(svrVer[i]) > Number(nowVer[i])) {
+            needUpdate = true;
+            break;
         }
+    }
 
-        item.descList = descList;
-    });
-
-    state.itemList = itemList;
+    if(needUpdate) {
+        state.version = action.version;
+    }
 }

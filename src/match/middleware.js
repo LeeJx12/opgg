@@ -8,21 +8,24 @@ MiddlewareRegistry.register(store => next => action => {
     case ACTION_SEARCH:
         getSummonerMatchList(action.keyword)
             .then(result => {
+                const promiseList = [];
                 result.games.forEach(game => {
-                    getMatchDetail(action.keyword, game.gameId)
-                        .then(detail => {
-                            game.teams = detail;
+                    promiseList.push(getMatchDetail(action.keyword, game.gameId));
+                });
+
+                Promise.all(promiseList)
+                    .then(details => {
+                        console.log(details)
+                        result.games.forEach((game, idx) => {
+                            game.teams = details[idx].teams;
                         })
-                })
-                dispatch(setSummonerMatchList(result, store.getState()['opgg/app'].itemList))
+                    })
+                    .then(() => {
+                        dispatch(setSummonerMatchList(result, store.getState()['opgg/app'].itemList, store.getState()['opgg/app'].spells))
+                    })
             })
             //.catch(e => dispatch(summonerNotFound()));
         break;
-    // case GET_MATCH_DETAIL:
-    //     getMatchDetail(action.summonerName, action.gameId)
-    //         .then(result => {
-    //             dispatch(setMatchDetail(result, action.summonerName))
-    //         })
     }
 
     return next(action);
