@@ -1,13 +1,11 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { isEmpty } from '../../common/functions';
-import { getMatchDetail } from '../actions';
+import Tooltip from 'react-tooltip-lite';
 
 class MatchListItem extends Component {
     constructor(props) {
         super(props);
-
-        props.dispatch(getMatchDetail(props.game.summonerName, props.game.gameId));
     }
 
     spellRender() {
@@ -48,12 +46,45 @@ class MatchListItem extends Component {
                     <li key={idx}></li>
                 )
             } else {
+                const { detail } = itEl;
+                const { descList } = detail;
+
+                const descRender = descList.map((desc, idx) => {
+                    if (desc === '<br>') {
+                        return (
+                            <span><br/></span>
+                        )
+                    } else {
+                        if (idx === 0) {
+                            <span>{desc}</span>
+                        } else {
+                            <span><br/>{desc}</span>
+                        }
+                    }
+                });
+
                 return (
-                    <li key={idx}>
-                        <div className="" style={{position: "relative"}}>
-                            <img src={itEl.imageUrl} alt=""/>
-                        </div>
-                    </li>
+                    <Tooltip
+                        content={(
+                            <div class="toolTip">
+                                <div class="item_name">{detail.name}</div>
+                                <div>{detail.plaintext}</div>
+                                <div>
+                                    { descRender }
+                                </div>
+                                <br/>가격:<span class="item_cost">{`${detail.gold.total} (${detail.gold.sell})`}</span>
+                            </div>
+                        )}
+                        direction="top"
+                        tagName="div"
+                        className="toolTip"
+                    >
+                        <li key={idx}>
+                            <div className="" style={{position: "relative"}}>
+                                <img src={itEl.imageUrl} alt=""/>
+                            </div>
+                        </li>
+                    </Tooltip>
                 )
             }
         });

@@ -1,7 +1,6 @@
 import MiddlewareRegistry from "../redux/MiddlewareRegistry";
 import { ACTION_SEARCH } from "../search";
-import { setMatchDetail, setSummonerMatchList } from "./actions";
-import { GET_MATCH_DETAIL } from "./actionTypes";
+import { setSummonerMatchList } from "./actions";
 
 MiddlewareRegistry.register(store => next => action => {
     const { dispatch } = store;
@@ -9,15 +8,21 @@ MiddlewareRegistry.register(store => next => action => {
     case ACTION_SEARCH:
         getSummonerMatchList(action.keyword)
             .then(result => {
-                dispatch(setSummonerMatchList(result))
+                result.games.forEach(game => {
+                    getMatchDetail(action.keyword, game.gameId)
+                        .then(detail => {
+                            game.teams = detail;
+                        })
+                })
+                dispatch(setSummonerMatchList(result, store.getState()['opgg/app'].itemList))
             })
             //.catch(e => dispatch(summonerNotFound()));
         break;
-    case GET_MATCH_DETAIL:
-        getMatchDetail(action.summonerName, action.gameId)
-            .then(result => {
-                dispatch(setMatchDetail(result, action.summonerName))
-            })
+    // case GET_MATCH_DETAIL:
+    //     getMatchDetail(action.summonerName, action.gameId)
+    //         .then(result => {
+    //             dispatch(setMatchDetail(result, action.summonerName))
+    //         })
     }
 
     return next(action);

@@ -7,7 +7,7 @@ class MatchRecord extends Component {
     }
 
     render() {
-        const { kills, deaths, assists, wins, losses } = this.props._summary;
+        const { kills, deaths, assists, wins, losses, totalWinRate } = this.props._summary;
         const champs = this.props._champs;
         const champRender = champs.map((element, idx) => {
             return (
@@ -96,7 +96,7 @@ class MatchRecord extends Component {
                                                 </g>
                                             </g>
                                         </svg></div>
-                                    <div className="text">63%</div>
+                                    <div className="text">{totalWinRate}%</div>
                                 </div>
                             </td>
                             <td className="kda">

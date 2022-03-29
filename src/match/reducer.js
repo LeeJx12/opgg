@@ -1,6 +1,6 @@
-import { getAvgPointClassName, getWinRateClassName } from '../common/functions.js';
+import { getAvgPointClassName, getFileNameFromUrl, getFormattedDate, getMinuteSecond, getWinRateClassName, isEmpty } from '../common/functions.js';
 import ReducerRegistry from '../redux/ReduxRegistry.js';
-import { GET_MATCH_DETAIL, SET_MATCH_DETAIL, SET_SUMMONER_MATCHLIST } from './actionTypes';
+import { SET_SUMMONER_MATCHLIST } from './actionTypes';
 
 function _getInitialState() {
     let champs = [];
@@ -23,9 +23,6 @@ ReducerRegistry.register(
         case SET_SUMMONER_MATCHLIST:
             parse(state, action);
             break;
-        case SET_MATCH_DETAIL:
-            parseDetail(state, action);
-            break;
         }
 
         return {
@@ -39,6 +36,10 @@ function parse(state, action) {
     let positions = action.positions;
     let summary = action.summary;
     let games = action.games;
+    let itemList = action.itemList;
+
+    const totalWinRate = Math.round((summary.wins / (summary.wins + summary.losses)) * 100);
+    summary.totalWinRate = totalWinRate;
 
     champs.forEach(element => {
         const { wins, losses, kills, deaths, assists, imageUrl, name, id } = element;
@@ -65,7 +66,7 @@ function parse(state, action) {
 
     games.forEach(element => {
         const result = element.needRenew ? "REMAKE" : (element.isWin ? "WIN" : "LOSE");
-        const { champion, createDate, gameId, gameLength, gameType, items, peak, spells, stats } = element;
+        const { champion, createDate, gameId, gameLength, gameType, items, peak, spells, stats, summonerName } = element;
 
         const wardImageUrl = "WIN" === result ? "./resource/image/icon-ward-blue.png" : "./resource/image/icon-ward-red.png";
         const wardCnt = stats.ward.sightWardsBought + stats.ward.visionWardsBought;
@@ -74,30 +75,30 @@ function parse(state, action) {
 
         const buildIcon = "WIN" === result ? "./resource/image/icon-buildblue-p.png" : "./resource/image/icon-buildred-p.png";
 
+        let found = element.teams[0].players.find(player => player.summonerName === summonerName);
+        if (!found) found = element.teams[1].players.find(player => player.summonerName === summonerName);
+
+        items.forEach(item => {
+            const itemId = getFileNameFromUrl(item.imageUrl);
+
+            if (!isEmpty(itemId)) {
+                item.detail = itemList[itemId];
+            }
+        });
+
         element.result = result;
         element.wardImageUrl = wardImageUrl;
         element.wardCnt = wardCnt;
         element.ward = ward;
         element.buildIcon = buildIcon;
         element.name = '';
-        element.level = 0;
+        element.level = found.champion.level;
+        element.gameLength = getMinuteSecond(gameLength);
+        element.createDate = getFormattedDate(createDate);
     })
 
     state.champs = champs;
     state.positions = positions;
     state.summary = summary;
     state.games = games;
-    state.teams = {};
-}
-
-function parseDetail(state, action) {
-    const game = action.data;
-    const summonerName = action.summonerName;
-
-    let found = game.teams[0].players.find(player => player.summonerName === summonerName);
-    if (!found) found = game.teams[1].players.find(player => player.summonerName === summonerName);
-
-    const trgtGame = state.games.find(g => g.gameId === game.gameId);
-    trgtGame.level = found.champion.level;
-    state.teams[game.gameId] = game.teams;
 }

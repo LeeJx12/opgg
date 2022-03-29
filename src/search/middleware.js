@@ -1,6 +1,4 @@
-import { setSummonerMatchList } from "../match/actions";
 import MiddlewareRegistry from "../redux/MiddlewareRegistry";
-import { setSummonerMostInfo } from "../winrate/actions";
 import { setSummonerBasicInfo, summonerNotFound } from "./actions";
 import { ACTION_SEARCH } from "./actionTypes";
 

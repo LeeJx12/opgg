@@ -1323,3 +1323,32 @@ div.search-area div.search {
     -ms-transform: rotate( 0deg );
     transform: rotate( 0deg );
 }
+
+.react-tooltip-lite {
+    max-width: 300px;
+    background: rgb(0, 0, 0);
+}
+.react-tooltip-lite {
+    max-width: 300px;
+    color: rgb(255, 255, 255);
+    font-size: 11px;
+    background: rgb(28, 30, 30);
+}
+.toolTip {
+    color: rgb(242, 242, 242);
+    font-size: 11px;
+    line-height: 16px;
+    white-space: pre-wrap;
+    max-width: 300px;
+}
+.toolTip .item_name {
+    color: rgb(0, 207, 188);
+}
+.toolTip > .item_name {
+    color: rgb(255, 198, 89);
+    font-weight: bold;
+}
+.toolTip > .item_cost {
+    color: rgb(255, 198, 89);
+    margin-left: 4px;
+}
