@@ -33,7 +33,7 @@ class SummonerInfo extends Component {
                                         content={toolTip}
                                         direction="up"
                                         tagName="div"
-                                        className="toolTip"
+                                        className="tooltip"
                                     >
                                         <b>{element.shortString}</b> {element.tier}
                                     </Tooltip>

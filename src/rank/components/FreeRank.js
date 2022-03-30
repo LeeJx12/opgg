@@ -44,7 +44,7 @@ class FreeRank extends AbstractRank {
                                 content="자유랭크"
                                 direction="up"
                                 tagName="div"
-                                className="toolTip"
+                                className="tooltip"
                             >
                                 <img src={tierRank.imageUrl} alt={tierRank.tier.toUpperCase()}/>
                             </Tooltip>

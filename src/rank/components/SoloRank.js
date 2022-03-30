@@ -43,7 +43,7 @@ class SoloRank extends AbstractRank {
                                 content="솔로랭크"
                                 direction="up"
                                 tagName="div"
-                                className="toolTip"
+                                className="tooltip"
                             >
                                 <img src={tierRank.imageUrl} alt={tierRank.tier.toUpperCase()}/>
                             </Tooltip>

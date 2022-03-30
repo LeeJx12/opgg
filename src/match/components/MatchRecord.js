@@ -25,7 +25,8 @@ class MatchRecord extends Component {
                             content="승률"
                             direction="up"
                             tagName="div"
-                            className="toolTip"
+                            className="tooltip"
+                            styles={{display: 'inline'}}
                         >
                             <b className={element.winRateCN}>{element.winRate}%</b>
                         </Tooltip> ({element.wins}승 {element.losses}패)
@@ -73,7 +74,7 @@ class MatchRecord extends Component {
                                 <div className="chart">
                                     <PieChart width={90} height={90}>
                                         <Pie data={pieData} startAngle={-270}
-                                            color="#000000" dataKey="value" nameKey="name" cx="50%" cy="50%" innerRadius={30} outerRadius={50} fill="#1f8ecd" >
+                                            color="#000000" dataKey="value" nameKey="name" cx="50%" cy="50%" innerRadius={32} outerRadius={50} fill="#1f8ecd" >
                                             <Cell fill="#1f8ecd" />
                                             <Cell fill="#ee5a52"/>
                                         </Pie>
@@ -90,7 +91,7 @@ class MatchRecord extends Component {
                                         content="킬관여율"
                                         direction="up"
                                         tagName="div"
-                                        className="toolTip"
+                                        className="tooltip"
                                     >
                                         <span className="kill-participantion">({killPart}%)</span>
                                     </Tooltip>

@@ -25,7 +25,7 @@ class WinRateList extends Component {
                 content={content}
                 direction="up"
                 tagName="div"
-                className="toolTip"
+                className="tooltip"
             >
                 {element()}
             </Tooltip>
@@ -62,7 +62,7 @@ class WinRateList extends Component {
                             content="승률"
                             direction="up"
                             tagName="div"
-                            className="toolTip"
+                            className="tooltip"
                         >
                             <div className={winRateCN}>{winRate}%</div>
                         </Tooltip>

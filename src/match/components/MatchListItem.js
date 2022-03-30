@@ -101,7 +101,7 @@ class MatchListItem extends Component {
                 )}
                 direction="up"
                 tagName="div"
-                className="toolTip"
+                className="tooltip"
             >
                 <img src={imageUrl} alt=""/>
             </Tooltip>
@@ -173,7 +173,7 @@ class MatchListItem extends Component {
                             content={createDateStr}
                             direction="up"
                             tagName="div"
-                            className="toolTip"
+                            className="tooltip"
                         >
                             <div className="time-stamp">{createDate}</div>
                         </Tooltip>
@@ -206,7 +206,7 @@ class MatchListItem extends Component {
                                 content={`미니언 ${stats.general.cs} 분당CS ${stats.general.csPerMin}개`}
                                 direction="up"
                                 tagName="div"
-                                className="toolTip"
+                                className="tooltip"
                             >
                                 {stats.general.cs} ({stats.general.csPerMin})CS
                             </Tooltip>
@@ -216,7 +216,7 @@ class MatchListItem extends Component {
                                 content="킬관여"
                                 direction="up"
                                 tagName="div"
-                                className="toolTip"
+                                className="tooltip"
                             >
                                 킬관여 {stats.general.contributionForKillRate}
                             </Tooltip>
@@ -237,7 +237,7 @@ class MatchListItem extends Component {
                                             content="빌드"
                                             direction="up"
                                             tagName="div"
-                                            className="toolTip"
+                                            className="tooltip"
                                         >
                                             <button>
                                                 <img src={buildIcon} alt=""/>
