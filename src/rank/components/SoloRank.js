@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import Tooltip from 'react-tooltip-lite';
 import { isEmpty } from '../../common/functions';
 import AbstractRank, { _mapStateToProps } from './AbstractRank';
 
@@ -13,9 +14,7 @@ class SoloRank extends AbstractRank {
             <div className="rank-div free-rank">
                 <div className="wrapper">
                     <div className="medal">
-                        <div className="" style={{position: "relative"}}>
-                            <img src="./resource/image/unranked.png" alt="UNRANKED"/>
-                        </div>
+                        <img src="./resource/image/unranked.png" alt="UNRANKED"/>
                     </div>
                     <div className="info">
                         <div className="type">솔로랭크</div>
@@ -40,9 +39,14 @@ class SoloRank extends AbstractRank {
                 <div className="rank-div solo-rank">
                     <div className="wrapper">
                         <div className="medal">
-                            <div className="" style={{position: "relative"}}>
+                            <Tooltip
+                                content="솔로랭크"
+                                direction="up"
+                                tagName="div"
+                                className="toolTip"
+                            >
                                 <img src={tierRank.imageUrl} alt={tierRank.tier.toUpperCase()}/>
-                            </div>
+                            </Tooltip>
                         </div>
                         <div className="info">
                             <div className="type">솔로랭크</div>

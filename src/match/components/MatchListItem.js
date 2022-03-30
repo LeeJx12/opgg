@@ -23,9 +23,7 @@ class MatchListItem extends Component {
 
         return peak.map((peEl, idx) => (
             <div className="rune" key={idx}>
-                <div className="" style={{position: "relative"}}>
-                    <img src={peEl} alt=""/>
-                </div>
+                <img src={peEl} alt=""/>
             </div>
         ));
     }
@@ -105,9 +103,7 @@ class MatchListItem extends Component {
                 tagName="div"
                 className="toolTip"
             >
-                <div className="" style={{position: "relative"}}>
-                    <img src={imageUrl} alt=""/>
-                </div>
+                <img src={imageUrl} alt=""/>
             </Tooltip>
         );
     }
@@ -167,15 +163,20 @@ class MatchListItem extends Component {
     }
 
     render() {
-        const { gameId, gameType, createDate, result, gameLength, champion, stats, wardImageUrl, wardCnt, ward, wardDetail, buildIcon, name, level } = this.props.game;
+        const { gameId, gameType, createDate, result, gameLength, champion, stats, wardImageUrl, wardCnt, ward, wardDetail, buildIcon, name, level, createDateStr } = this.props.game;
         return (
             <li className="record-list">
                 <div result={result} className={`record-div ${result.toLowerCase()}`}>
                     <div className="info">
                         <div className="type">{gameType}</div>
-                        <div className="" style={{position: "relative"}}>
+                        <Tooltip
+                            content={createDateStr}
+                            direction="up"
+                            tagName="div"
+                            className="toolTip"
+                        >
                             <div className="time-stamp">{createDate}</div>
-                        </div>
+                        </Tooltip>
                         <div className="bar"></div>
                         <div className="game-result">{result}</div>
                         <div className="game-length">{gameLength}</div>
@@ -201,10 +202,24 @@ class MatchListItem extends Component {
                     <div className="stats">
                         <div className="level">레벨 {level}</div>
                         <div className="cs">
-                            <div className="" style={{position: "relative"}}>{stats.general.cs} ({stats.general.csPerMin})</div>CS
+                            <Tooltip
+                                content={`미니언 ${stats.general.cs} 분당CS ${stats.general.csPerMin}개`}
+                                direction="up"
+                                tagName="div"
+                                className="toolTip"
+                            >
+                                {stats.general.cs} ({stats.general.csPerMin})CS
+                            </Tooltip>
                         </div>
                         <div className="kill-participantion">
-                            <div className="" style={{position: "relative"}}>킬관여 {stats.general.contributionForKillRate}</div>
+                            <Tooltip
+                                content="킬관여"
+                                direction="up"
+                                tagName="div"
+                                className="toolTip"
+                            >
+                                킬관여 {stats.general.contributionForKillRate}
+                            </Tooltip>
                         </div>
                     </div>
                     <div className="items">
@@ -218,18 +233,16 @@ class MatchListItem extends Component {
                                         { this.itemTooltipRender(wardDetail, ward.imageUrl, true) }
                                     </div>
                                     <div className="build">
-                                        <div className="" style={{position: "relative"}}>
-                                            <Tooltip
-                                                content="빌드"
-                                                direction="up"
-                                                tagName="div"
-                                                className="toolTip"
-                                            >
-                                                <button>
-                                                    <img src={buildIcon} alt=""/>
-                                                </button>
-                                            </Tooltip>
-                                        </div>
+                                        <Tooltip
+                                            content="빌드"
+                                            direction="up"
+                                            tagName="div"
+                                            className="toolTip"
+                                        >
+                                            <button>
+                                                <img src={buildIcon} alt=""/>
+                                            </button>
+                                        </Tooltip>
                                     </div>
                                 </div>
                             </div>

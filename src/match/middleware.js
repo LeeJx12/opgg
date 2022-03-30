@@ -15,7 +15,6 @@ MiddlewareRegistry.register(store => next => action => {
 
                 Promise.all(promiseList)
                     .then(details => {
-                        console.log(details)
                         result.games.forEach((game, idx) => {
                             game.teams = details[idx].teams;
                         })

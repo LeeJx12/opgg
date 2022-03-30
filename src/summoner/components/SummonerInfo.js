@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import Tooltip from 'react-tooltip-lite';
 import { isEmpty } from '../../common/functions';
 
 class SummonerInfo extends Component {
@@ -23,11 +24,22 @@ class SummonerInfo extends Component {
                 <ul>
                     {
                         previousTiers && previousTiers.length > 0 &&
-                        previousTiers.map((element, idx) => (
-                            <li key={idx}>
-                                <div className="" style={{position: "relative"}}><b>{element.shortString}</b> {element.tier}</div>
-                            </li>
-                        ))
+                        previousTiers.map((element, idx) => {
+                            const toolTip = `${element.tier} ${element.shortString.replace(/[^0-9]/g, "")} ${element.lp}LP`;
+
+                            return (
+                                <li key={idx}>
+                                    <Tooltip
+                                        content={toolTip}
+                                        direction="up"
+                                        tagName="div"
+                                        className="toolTip"
+                                    >
+                                        <b>{element.shortString}</b> {element.tier}
+                                    </Tooltip>
+                                </li>
+                            )
+                        })
                     }
                 </ul>
                 <div className="face">

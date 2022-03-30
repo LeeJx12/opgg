@@ -6,3 +6,4 @@ export const LINE_NAMES = {
     JNG: "정글",
     ADC: "바텀"
 }
+export const DAY_OF_WEEK = ['일요일','월요일','화요일','수요일','목요일','금요일','토요일'];

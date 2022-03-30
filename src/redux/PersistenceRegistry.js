@@ -58,7 +58,6 @@ class PersistenceRegistry {
                     console.log('Error persisting redux subtree', subtreeName, error);
                 }
             }
-            //console.log(`redux state persisted. ${this._checksum} -> ${checksum}`);
             this._checksum = checksum;
         }
     }
@@ -75,7 +74,7 @@ class PersistenceRegistry {
         try {
             return md5.hex(JSON.stringify(state) || '');
         } catch (error) {
-            //console.log('Error calculating checksum for state', error);
+            console.log('Error calculating checksum for state', error);
 
             return '';
         }

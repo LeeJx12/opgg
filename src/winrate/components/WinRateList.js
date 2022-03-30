@@ -52,17 +52,20 @@ class WinRateList extends Component {
                     <div className="kda">
                         { 
                             this.itemTooltipRender(`(K ${kills} + A ${assists}) / D ${deaths}`, () => (
-                                <div className="" style={{position: "relative"}}>
-                                    <div className={kdaCN}>{kda} 평점</div>
-                                </div>  
+                                <div className={kdaCN}>{kda} 평점</div>
                             ))
                         }
                         <div className="detail">{kills} / {deaths} / {assists}</div>
                     </div>
                     <div className="played">
-                        <div className="" style={{position: "relative"}}>
+                        <Tooltip
+                            content="승률"
+                            direction="up"
+                            tagName="div"
+                            className="toolTip"
+                        >
                             <div className={winRateCN}>{winRate}%</div>
-                        </div>
+                        </Tooltip>
                         <div className="count">{games} 게임</div>
                     </div>
                 </div>

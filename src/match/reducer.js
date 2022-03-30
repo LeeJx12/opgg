@@ -1,4 +1,4 @@
-import { getAvgPointClassName, getFileNameFromUrl, getFormattedDate, getMinuteSecond, getWinRateClassName, isEmpty } from '../common/functions.js';
+import { getAvgPointClassName, getFileNameFromUrl, getFormattedDate, getFullFormattedDate, getMinuteSecond, getWinRateClassName, isEmpty } from '../common/functions.js';
 import ReducerRegistry from '../redux/ReduxRegistry.js';
 import { SET_SUMMONER_MATCHLIST, SET_TAB_TYPE } from './actionTypes';
 
@@ -114,6 +114,7 @@ function parse(state, action) {
         element.level = found.champion.level;
         element.gameLength = getMinuteSecond(gameLength);
         element.createDate = getFormattedDate(createDate);
+        element.createDateStr = getFullFormattedDate(createDate);
     })
 
     summary.killPart = Math.round((summary.kills + summary.assists) / totalKills * 100);

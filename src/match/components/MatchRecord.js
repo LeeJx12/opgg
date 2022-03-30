@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import Tooltip from 'react-tooltip-lite';
 import { Cell, Pie, PieChart } from 'recharts';
 import { LINE_NAMES } from '../../common/constants';
 import { getAvgPointClassName, getFileNameFromUrl, getWinRateClassName } from '../../common/functions';
@@ -20,9 +21,14 @@ class MatchRecord extends Component {
                     </div>
                     <div className="name">{element.name}</div>
                     <div className="win-lose">
-                        <div className="" style={{position: "relative", display: "inline"}}>
+                        <Tooltip
+                            content="승률"
+                            direction="up"
+                            tagName="div"
+                            className="toolTip"
+                        >
                             <b className={element.winRateCN}>{element.winRate}%</b>
-                        </div> ({element.wins}승 {element.losses}패)
+                        </Tooltip> ({element.wins}승 {element.losses}패)
                     </div>
                     <div className={element.kdaCN}>{element.kda} 평점</div>
                 </li>
@@ -80,8 +86,14 @@ class MatchRecord extends Component {
                                     <span>{assists}</span>
                                 </div>
                                 <div className="ratio"><span className="kda-ratio">{(( kills + assists ) / deaths).toFixed(2)}:1</span>
-                                    <div className="" style={{position: "relative"}}><span
-                                            className="kill-participantion">({killPart}%)</span></div>
+                                    <Tooltip
+                                        content="킬관여율"
+                                        direction="up"
+                                        tagName="div"
+                                        className="toolTip"
+                                    >
+                                        <span className="kill-participantion">({killPart}%)</span>
+                                    </Tooltip>
                                 </div>
                             </td>
                             <td className="position-stats">

@@ -1,3 +1,4 @@
+import { DAY_OF_WEEK } from "./constants";
 
 export function getKdaClassName(kda) {
     let className = "kda-default";
@@ -63,6 +64,24 @@ export function getFormattedDate(time) {
     }
 
     return dateStr;
+}
+
+export function getFullFormattedDate(time) {
+    const date = new Date(time * 1000);
+
+    const year = date.getFullYear();
+    const month = ('0' + (date.getMonth() + 1)).slice(-2);
+    const day = ('0' + date.getDate()).slice(-2);
+    let hours = ('0' + date.getHours()).slice(-2); 
+    const minutes = ('0' + date.getMinutes()).slice(-2);
+    let ampm = '오전';
+
+    if (hours > 12) {
+        hours -= 12;
+        ampm = '오후';
+    }
+
+    return `${year}년 ${month}월 ${day}일 ${DAY_OF_WEEK[date.getDay()]} ${ampm} ${hours}:${minutes}`;
 }
 
 export function getFileNameFromUrl(url) {
